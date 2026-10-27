@@ -81,7 +81,9 @@ std::unique_ptr<ASTNode> statement(TokCursor &tokcurs) {
     } else if (tokcurs.peek().type == Type::Keyword) {
         if (tokcurs.peek().text == "print") {
             tokcurs.advance();
+            expect(tokcurs, Type::LParentheses, "( expected.\n");
             std::unique_ptr<ASTNode> expr = comparison(tokcurs);
+            expect(tokcurs, Type::RParentheses, ") expected.\n");
             std::unique_ptr<ASTNode> print = std::make_unique<ASTNode>(Type::Print, std::move(expr));
             return print;
         } else if (tokcurs.peek().text == "while") {
