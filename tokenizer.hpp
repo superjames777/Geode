@@ -72,10 +72,39 @@ std::vector<Token> tokenize(const std::string &inputstr) {
                 tokens.push_back({ Type::RParentheses, std::string(1, inputstr[i]) });
                 break;
                 case '=':
-                tokens.push_back({ Type::Assignment, std::string(1, inputstr[i]) });
+                if (i + 1 < inputstr.size() && inputstr[i + 1] == '=') {
+                    tokens.push_back({ Type::Equality, inputstr.substr(i, 2) });
+                    i++;
+                } else {
+                    tokens.push_back({ Type::Assignment, std::string(1, inputstr[i]) });
+                }
                 break;
                 case ';':
                 tokens.push_back({ Type::Separator, std::string(1, inputstr[i]) });
+                break;
+                case '<':
+                if (i + 1 < inputstr.size() && inputstr[i + 1] == '=') {
+                    tokens.push_back({ Type::LessEqual, inputstr.substr(i, 2) });
+                    i++;
+                } else {
+                    tokens.push_back({ Type::Less, std::string(1, inputstr[i]) });
+                }
+                break;
+                case '>':
+                if (i + 1 < inputstr.size() && inputstr[i + 1] == '=') {
+                    tokens.push_back({ Type::GreaterEqual, inputstr.substr(i, 2) });
+                    i++;
+                } else {
+                    tokens.push_back({ Type::Greater, std::string(1, inputstr[i]) });
+                }
+                break;
+                case '!':
+                if (i + 1 < inputstr.size() && inputstr[i + 1] == '=') {
+                    tokens.push_back({ Type::NotEqual, inputstr.substr(i, 2) });
+                    i++;
+                } else {
+                    tokens.push_back({ Type::Unknown, std::string(1, inputstr[i]) });
+                }
                 break;
                 default:
                 tokens.push_back({ Type::Unknown, std::string(1, inputstr[i]) });

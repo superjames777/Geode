@@ -64,6 +64,18 @@ double evaluate(ASTNode *head, std::map<std::string, double> &varmap) {
             }
             case Type::Exponent:
             return std::pow(num1, num2);
+            case Type::Equality:
+            return num1 == num2;
+            case Type::Less:
+            return num1 < num2;
+            case Type::Greater:
+            return num1 > num2;
+            case Type::LessEqual:
+            return num1 <= num2;
+            case Type::GreaterEqual:
+            return num1 >= num2;
+            case Type::NotEqual:
+            return num1 != num2;
             default:
             throw std::runtime_error("Invalid nodetype.\n");
         }

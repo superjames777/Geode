@@ -12,7 +12,7 @@ namespace Geode {
 
 namespace typenodes {
 
-extern std::string TYPESTRS[18];
+extern std::string TYPESTRS[24];
 
 enum class Type { 
     Plus = 0, 
@@ -32,10 +32,16 @@ enum class Type {
     Separator = 14,
     Sequence = 15,
     Keyword = 16,
-    Print = 17
+    Print = 17,
+    Equality = 18,
+    Greater = 19,
+    Less = 20,
+    NotEqual = 21,
+    GreaterEqual = 22,
+    LessEqual = 23
 };
 
-std::string TYPESTRS[18] = { 
+std::string TYPESTRS[24] = { 
     "Plus", 
     "Minus", 
     "Multiply", 
@@ -53,7 +59,13 @@ std::string TYPESTRS[18] = {
     "Separator",
     "Sequence",
     "Keyword",
-    "Print"
+    "Print",
+    "Equality",
+    "Greater",
+    "Less",
+    "NotEqual",
+    "GreaterEqual",
+    "LessEqual"
 };
 
 std::map<std::string, Type> KEYWORDS = {

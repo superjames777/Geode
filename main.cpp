@@ -19,6 +19,7 @@ The levels:
 
 program
 statement
+comparison
 expression
 term
 unary
