@@ -12,7 +12,7 @@ namespace Geode {
 
 namespace typenodes {
 
-extern std::string TYPESTRS[24];
+extern std::string TYPESTRS[28];
 
 enum class Type { 
     Plus = 0, 
@@ -38,10 +38,14 @@ enum class Type {
     Less = 20,
     NotEqual = 21,
     GreaterEqual = 22,
-    LessEqual = 23
+    LessEqual = 23,
+    LCBracket = 24, // Left Curly Bracket: {
+    RCBracket = 25, // Right Curly Bracket: }
+    If = 26,
+    While = 27
 };
 
-std::string TYPESTRS[24] = { 
+std::string TYPESTRS[28] = { 
     "Plus", 
     "Minus", 
     "Multiply", 
@@ -65,11 +69,18 @@ std::string TYPESTRS[24] = {
     "Less",
     "NotEqual",
     "GreaterEqual",
-    "LessEqual"
+    "LessEqual",
+    "LCBracket",
+    "RCBracket",
+    "If",
+    "While"
 };
 
 std::map<std::string, Type> KEYWORDS = {
-    {"print", Type::Keyword}
+    {"print", Type::Keyword},
+    {"if", Type::Keyword},
+    {"else", Type::Keyword},
+    {"while", Type::Keyword}
 };
 
 struct Token {

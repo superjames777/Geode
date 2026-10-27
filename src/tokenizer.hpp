@@ -71,6 +71,12 @@ std::vector<Token> tokenize(const std::string &inputstr) {
                 case ')':
                 tokens.push_back({ Type::RParentheses, std::string(1, inputstr[i]) });
                 break;
+                case '{':
+                tokens.push_back({ Type::LCBracket, std::string(1, inputstr[i]) });
+                break;
+                case '}':
+                tokens.push_back({ Type::RCBracket, std::string(1, inputstr[i]) });
+                break;
                 case '=':
                 if (i + 1 < inputstr.size() && inputstr[i + 1] == '=') {
                     tokens.push_back({ Type::Equality, inputstr.substr(i, 2) });

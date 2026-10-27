@@ -10,13 +10,18 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Create Release
+      - name: Build geode.exe
+        run: |
+          cmake -S . -B build
+          cmake --build build --config Release
+      - name: Create Release and upload executable
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
+          gh release create "$env:GITHUB_REF_NAME" `
+            "build\Release\geode.exe" `
+            --title "$env:GITHUB_REF_NAME" `
             --generate-notes

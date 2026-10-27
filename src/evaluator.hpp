@@ -46,6 +46,19 @@ double evaluate(ASTNode *head, std::map<std::string, double> &varmap) {
         double toprint = evaluate(head->children[0].get(), varmap);
         std::cout << toprint << std::endl;
         return 0.0;
+    } else if (head->nodetype == Type::While) {
+        while (evaluate(head->children[0].get(), varmap) != 0) {
+            evaluate(head->children[1].get(), varmap);
+        }
+        return 0.0;
+    } else if (head->nodetype == Type::If) {
+        double ifcondition = evaluate(head->children[0].get(), varmap);
+        if (ifcondition != 0) {
+            evaluate(head->children[1].get(), varmap);
+        } else if (head->children.size() == 3) {
+            evaluate(head->children[2].get(), varmap);
+        }
+        return 0.0;
     } else {
         double num1 = evaluate(head->left.get(), varmap);
         double num2 = evaluate(head->right.get(), varmap);
