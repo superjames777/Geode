@@ -12,11 +12,21 @@
         <p>Syntax in Geode is similar to languages like C++ and C. Here is an example of a simple Geode program's syntax:</p>
 
         <pre><code>
-    x = 0;
-    while (x < 10) {
-        x = x + 1;
-        print (x);
+    str x = "countdown: ";
+    print (x);
+    int y = 10;
+    bool b = false;
+    while (y > 0) {
+	    if (b) {
+		    y = y + 1;
+		    b = false;
+	    } else {
+		    y = y - 2;
+		    b = true;
+	    }
+	    print (y);
     }
+    print ("YAY");
         </code></pre>
     
         <p><strong><em>Coming Soon...</em></strong></p>
