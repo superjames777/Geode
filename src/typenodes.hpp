@@ -193,9 +193,9 @@ struct TokCursor {
 
 struct Value {
     ValType vtype;
-    long long val;
-    std::string strval;
-    bool boolval;
+    long long val = 0;
+    std::string strval = "";
+    bool boolval = false;
 
     explicit Value(ValType vty, long long v) :
           vtype(vty),

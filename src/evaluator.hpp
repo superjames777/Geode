@@ -19,8 +19,9 @@ using typenodes::Value;
 using typenodes::ValType;
 
 Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap);
+int valuecmp(const Value &left, const Value &right);
 
-int compareValues(const Value &left, const Value &right) {
+int valuecmp(const Value &left, const Value &right) {
     if (left.vtype != right.vtype) {
         throw std::runtime_error("Cannot compare different types.\n");
     }
@@ -73,16 +74,16 @@ Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap) {
         Value toprint = evaluate(head->children[0].get(), varmap);
         switch (toprint.vtype) {
             case ValType::Int:
-                std::cout << toprint.val;
-                break;
+            std::cout << toprint.val;
+            break;
             case ValType::Str:
-                std::cout << toprint.strval;
-                break;
+            std::cout << toprint.strval;
+            break;
             case ValType::Bool:
-                std::cout << (toprint.boolval ? "true" : "false");
-                break;
+            std::cout << (toprint.boolval ? "true" : "false");
+            break;
             default:
-                throw std::runtime_error("Invalid value type.\n");
+            throw std::runtime_error("Invalid value type.\n");
         }
         std::cout << std::endl;
         return Value(ValType::Int, 0LL);
@@ -121,19 +122,23 @@ Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap) {
                 return Value(ValType::Int, (num1.val / num2.val));
             }
             case Type::Exponent:
-            return Value(ValType::Int, static_cast<long long>(std::pow(num1.val, num2.val)));
+            if (num2.val < 0) {
+                throw std::runtime_error("Cannot have a negative power.\n");
+            } else {
+                return Value(ValType::Int, static_cast<long long>(std::pow(num1.val, num2.val)));
+            }
             case Type::Equality:
-            return Value(ValType::Bool, compareValues(num1, num2) == 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) == 0);
             case Type::Less:
-            return Value(ValType::Bool, compareValues(num1, num2) < 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) < 0);
             case Type::Greater:
-            return Value(ValType::Bool, compareValues(num1, num2) > 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) > 0);
             case Type::LessEqual:
-            return Value(ValType::Bool, compareValues(num1, num2) <= 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) <= 0);
             case Type::GreaterEqual:
-            return Value(ValType::Bool, compareValues(num1, num2) >= 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) >= 0);
             case Type::NotEqual:
-            return Value(ValType::Bool, compareValues(num1, num2) != 0);
+            return Value(ValType::Bool, valuecmp(num1, num2) != 0);
             default:
             throw std::runtime_error("Invalid nodetype.\n");
         }
