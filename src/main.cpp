@@ -29,7 +29,8 @@ factor
 */
 
 int main(int argc, char *argv[]) {
-    std::map<std::string, double> varmap;
+    std::map<std::string, Geode::typenodes::Value> varmap;
+    std::map<std::string, Geode::typenodes::ValType> typemap;
     if (argc == 2) {
         std::ifstream geofile(argv[1]);
         if (!geofile.is_open()) {
@@ -41,7 +42,7 @@ int main(int argc, char *argv[]) {
             std::istreambuf_iterator<char>{}
         );
         try {
-            Geode::interpreter::interpret(script, varmap);
+            Geode::interpreter::interpret(script, varmap, typemap);
         } catch (const std::exception &e) {
             std::cerr << e.what();
             return 1;
@@ -59,10 +60,20 @@ int main(int argc, char *argv[]) {
                 std::cout << "> ";
                 continue;
             }
-            double result = 0.0;
             try {
-                result = Geode::interpreter::interpret(equation, varmap);
-                std::cout << result << std::endl;
+                Geode::typenodes::Value result = Geode::interpreter::interpret(equation, varmap, typemap);
+                switch (result.vtype) {
+                    case Geode::typenodes::ValType::Int:
+                        std::cout << result.val;
+                        break;
+                    case Geode::typenodes::ValType::Str:
+                        std::cout << result.strval;
+                        break;
+                    case Geode::typenodes::ValType::Bool:
+                        std::cout << (result.boolval ? "true" : "false");
+                        break;
+                }
+                std::cout << std::endl;
             } catch (const std::exception &e) {
                 std::cerr << e.what();
             }

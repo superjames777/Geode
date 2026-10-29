@@ -17,6 +17,7 @@ using typenodes::ASTNode;
 using typenodes::Token;
 using typenodes::TokCursor;
 using typenodes::Type;
+using typenodes::ValType;
 
 std::unique_ptr<ASTNode> program(TokCursor &tokcurs);
 std::unique_ptr<ASTNode> statement(TokCursor &tokcurs);
@@ -111,6 +112,20 @@ std::unique_ptr<ASTNode> statement(TokCursor &tokcurs) {
                 ifnode.get()->children.push_back(std::move(resultelseblock));
             }
             return ifnode;
+        } else if (tokcurs.peek().text == "int" || tokcurs.peek().text == "str" || tokcurs.peek().text == "bool") {
+            ValType keywordtype = (tokcurs.peek().text == "int") ? ValType::Int : (tokcurs.peek().text == "str") ? ValType::Str : ValType::Bool;
+            tokcurs.advance();
+            if (tokcurs.peek().type != Type::Identifier) {
+                throw std::runtime_error("Expected identifier to follow type declaration.\n");
+            } else {
+                std::string identifiertext = tokcurs.peek().text;
+                tokcurs.advance();
+                expect(tokcurs, Type::Assignment, "Assignment expected after identifier.\n");
+                std::unique_ptr<ASTNode> compres = comparison(tokcurs);
+                std::unique_ptr<ASTNode> declarenode = std::make_unique<ASTNode>(identifiertext, keywordtype);
+                declarenode->children.push_back(std::move(compres));
+                return declarenode;
+            }
         } else {
             throw std::runtime_error("Nonexistant keyword passed as a keyword.\n");
         }
@@ -203,12 +218,30 @@ std::unique_ptr<ASTNode> factor(TokCursor &tokcurs) {
         tokcurs.advance();
         std::unique_ptr<ASTNode> varnode = std::make_unique<ASTNode>(varname);
         return varnode;
+    } else if (curtoken.type == Type::String) {
+        std::string strcontent = curtoken.text;
+        tokcurs.advance();
+        std::unique_ptr<ASTNode> strnode = std::make_unique<ASTNode>(Type::String);
+        strnode->name = strcontent;
+        return strnode;
+    } else if (curtoken.type == Type::Keyword) {
+        if (curtoken.text == "true") {
+            tokcurs.advance();
+            std::unique_ptr<ASTNode> truenode = std::make_unique<ASTNode>(Type::Bool);
+            truenode->value = 1.0;
+            return truenode;
+        } else if (curtoken.text == "false") {
+            tokcurs.advance();
+            std::unique_ptr<ASTNode> falsenode = std::make_unique<ASTNode>(Type::Bool);
+            falsenode->value = 0.0;
+            return falsenode;
+        } else {
+            throw std::runtime_error("Unexpected keyword in expression.\n");
+        }
     } else {
         throw std::runtime_error("Invalid token type.\n");
     }
 }
-
-
 
 } // namespace parser
 

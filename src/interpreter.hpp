@@ -14,17 +14,22 @@ namespace Geode {
 
 namespace interpreter {
 
-double interpret(const std::string &source, std::map<std::string, double> &varmap);
+Geode::typenodes::Value interpret(const std::string &source, std::map<std::string, Geode::typenodes::Value> &varmap, std::map<std::string, Geode::typenodes::ValType> &typemap);
 
-double interpret(const std::string &source, std::map<std::string, double> &varmap) {
-    std::vector<Geode::typenodes::Token> srctok = Geode::tokenizer::tokenize(source);
+Geode::typenodes::Value interpret(const std::string &source, std::map<std::string, Geode::typenodes::Value> &varmap, std::map<std::string, Geode::typenodes::ValType> &typemap) {
+    std::vector<Geode::typenodes::Token> srctok;
+    srctok = Geode::tokenizer::tokenize(source);
     Geode::typenodes::TokCursor srcurs(srctok, 0);
-    std::unique_ptr<Geode::typenodes::ASTNode> srcnode = nullptr;
-    srcnode = Geode::parser::program(srcurs);
+    auto srcnode = Geode::parser::program(srcurs);
     if (srcurs.peek().type != Geode::typenodes::Type::End) {
         throw std::runtime_error("Invalid expression.\n");
     } else {
-        double result = Geode::evaluator::evaluate(srcnode.get(), varmap);
+        std::map<std::string, Geode::typenodes::ValType> typemapcopy(typemap);
+        Geode::typechecker::checktype(srcnode.get(), typemapcopy);
+        std::map<std::string, Geode::typenodes::Value> varmapcopy(varmap);
+        Geode::typenodes::Value result = Geode::evaluator::evaluate(srcnode.get(), varmapcopy);
+        varmap = varmapcopy;
+        typemap = typemapcopy;
         return result;
     }
 }

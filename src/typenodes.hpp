@@ -12,7 +12,7 @@ namespace Geode {
 
 namespace typenodes {
 
-extern std::string TYPESTRS[28];
+extern std::string TYPESTRS[31];
 
 enum class Type { 
     Plus = 0, 
@@ -42,10 +42,13 @@ enum class Type {
     LCBracket = 24, // Left Curly Bracket: {
     RCBracket = 25, // Right Curly Bracket: }
     If = 26,
-    While = 27
+    While = 27,
+    String = 28,
+    Bool = 29,
+    Declare = 30
 };
 
-std::string TYPESTRS[28] = { 
+std::string TYPESTRS[31] = { 
     "Plus", 
     "Minus", 
     "Multiply", 
@@ -73,14 +76,28 @@ std::string TYPESTRS[28] = {
     "LCBracket",
     "RCBracket",
     "If",
-    "While"
+    "While",
+    "String",
+    "Bool",
+    "Declare"
+};
+
+enum class ValType {
+    Int = 0,
+    Str = 1,
+    Bool = 2
 };
 
 std::map<std::string, Type> KEYWORDS = {
     {"print", Type::Keyword},
     {"if", Type::Keyword},
     {"else", Type::Keyword},
-    {"while", Type::Keyword}
+    {"while", Type::Keyword},
+    {"str", Type::Keyword},
+    {"int", Type::Keyword},
+    {"bool", Type::Keyword},
+    {"true", Type::Keyword},
+    {"false", Type::Keyword}
 };
 
 struct Token {
@@ -90,6 +107,7 @@ struct Token {
 
 struct ASTNode {
     Type nodetype;
+    ValType valtype = ValType::Int;
     std::string name;
     double value;
     std::unique_ptr<ASTNode> left;
@@ -134,6 +152,15 @@ struct ASTNode {
     {
         children.push_back(std::move(child));
     }
+
+    ASTNode(const std::string &nname, ValType vtype) :
+            nodetype(Type::Declare),
+            name(nname),
+            valtype(vtype),
+            value(0),
+            left(nullptr),
+            right(nullptr)
+    {}
 };
 
 struct TokCursor {
@@ -162,6 +189,28 @@ struct TokCursor {
         }
         return tokenvector[vectorpos];
     }
+};
+
+struct Value {
+    ValType vtype;
+    long long val;
+    std::string strval;
+    bool boolval;
+
+    explicit Value(ValType vty, long long v) :
+          vtype(vty),
+          val(v)
+    {}
+
+    explicit Value(ValType vty, const std::string &strng) :
+          vtype(vty),
+          strval(strng)
+    {}
+
+    explicit Value(ValType vty, bool boo) :
+          vtype(vty),
+          boolval(boo)
+    {}
 };
 
 std::string gettypestr(Type type) {

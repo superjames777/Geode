@@ -1,6 +1,6 @@
 # Geode
 
-Geode is a small, interpreted, and __statically typed*__ programming language built in C++. I made it for fun so don't expect to be blown away by it or anything.
+Geode is a small, interpreted, and statically typed programming language built in C++. I made it for fun so don't expect to be blown away by it or anything.
 
 ## Features
 
@@ -10,11 +10,15 @@ Geode is a small, interpreted, and __statically typed*__ programming language bu
 - comparison operators
 - if & else
 - while
+- strings
+- ints
+- bools
+- static typing
 - stuff idk what to call it man just look at the source code its RIGHT there
 
 ### Coming Soon
 
-- strings
+- floats (not the yummy ones D: )
 
 ## How to Run With Geode
 

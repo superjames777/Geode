@@ -48,6 +48,18 @@ std::vector<Token> tokenize(const std::string &inputstr) {
             } else {
                 tokens.push_back({ Type::Identifier, sub });
             }
+        } else if (inputstr[i] == '"') {
+            i++;
+            size_t start = i;
+            while (i < inputstr.size() && inputstr[i] != '"') {
+                i++;
+            }
+            if (i >= inputstr.size()) {
+                throw std::runtime_error("Unterminated string: expected right \".\n");
+            } else {
+                tokens.push_back({ Type::String, inputstr.substr(start, i - start) });
+                i++;
+            }
         } else {
             switch (inputstr[i]) {
                 case '+':
