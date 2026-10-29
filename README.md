@@ -49,5 +49,3 @@ cmake --build build
 ## Geode Documentation
 
 For Documentation on Geode, go to the [GitHub Pages](https://superjames777.github.io/Geode/) site. It does not have much yet, but once the language gets some more features I will make sure to fully flesh it out.
-
-___*Not true YET. This project is very WIP so some stuff here may not be exactly correct yet. (COMING EVENTUALLY!!!)___
