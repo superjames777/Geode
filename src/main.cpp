@@ -19,6 +19,7 @@ The levels:
 
 program
 statement
+block
 comparison
 expression
 term
@@ -29,8 +30,8 @@ factor
 */
 
 int main(int argc, char *argv[]) {
-    std::map<std::string, Geode::typenodes::Value> varmap;
-    std::map<std::string, Geode::typenodes::ValType> typemap;
+    Geode::scope::scopestack<Geode::typenodes::Value> varmap;
+    Geode::scope::scopestack<Geode::typenodes::ValType> scopemap;
     if (argc == 2) {
         std::ifstream geofile(argv[1]);
         if (!geofile.is_open()) {
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
             std::istreambuf_iterator<char>{}
         );
         try {
-            Geode::interpreter::interpret(script, varmap, typemap);
+            Geode::interpreter::interpret(script, varmap, scopemap);
         } catch (const std::exception &e) {
             std::cerr << e.what();
             return 1;
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
                 continue;
             }
             try {
-                Geode::typenodes::Value result = Geode::interpreter::interpret(equation, varmap, typemap);
+                Geode::typenodes::Value result = Geode::interpreter::interpret(equation, varmap, scopemap);
                 switch (result.vtype) {
                     case Geode::typenodes::ValType::Int:
                         std::cout << result.val;

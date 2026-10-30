@@ -14,6 +14,7 @@ Geode is a small, interpreted, and statically typed programming language built i
 - ints
 - bools
 - static typing
+- scopes
 - stuff idk what to call it man just look at the source code its RIGHT there
 
 ### Coming Soon

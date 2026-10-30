@@ -17,28 +17,28 @@ using typenodes::ASTNode;
 using typenodes::Type;
 using typenodes::Value;
 using typenodes::ValType;
+using scope::scopestack;
 
-Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap);
+Value evaluate(ASTNode *head, scopestack<Value> &scopemap);
 int valuecmp(const Value &left, const Value &right);
 
 int valuecmp(const Value &left, const Value &right) {
     if (left.vtype != right.vtype) {
         throw std::runtime_error("Cannot compare different types.\n");
     }
-
     switch (left.vtype) {
         case ValType::Int:
-            return (left.val > right.val) - (left.val < right.val);
+        return (left.val > right.val) - (left.val < right.val);
         case ValType::Str:
-            return left.strval.compare(right.strval);
+        return left.strval.compare(right.strval);
         case ValType::Bool:
-            return static_cast<int>(left.boolval) - static_cast<int>(right.boolval);
+        return static_cast<int>(left.boolval) - static_cast<int>(right.boolval);
         default:
-            throw std::runtime_error("Invalid value type.\n");
+        throw std::runtime_error("Invalid value type.\n");
     }
 }
 
-Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap) {
+Value evaluate(ASTNode *head, scopestack<Value> &scopemap) {
     if (head == nullptr) {
         throw std::runtime_error("Invalid head.\n");
     } else if (head->nodetype == Type::Number) {
@@ -48,30 +48,30 @@ Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap) {
     } else if (head->nodetype == Type::Bool) {
         return Value(ValType::Bool, static_cast<bool>(head->value));
     } else if (head->nodetype == Type::Variable) {
-        auto variable = varmap.find(head->name);
-        if (variable != varmap.end()) {
-            return variable->second;
+        auto variable = scopemap.find(head->name);
+        if (variable != nullptr) {
+            return *variable;
         }
         throw std::runtime_error("Undefined variable.\n");
     } else if (head->nodetype == Type::Declare) {
-        Value value = evaluate(head->children[0].get(), varmap);
-        varmap.emplace(head->name, value);
+        Value value = evaluate(head->children[0].get(), scopemap);
+        scopemap.innerdeclare(head->name, value);
         return value;
     } else if (head->nodetype == Type::Assign) {
-        Value varval = evaluate(head->left.get(), varmap);
-        varmap.at(head->name) = varval;
+        Value varval = evaluate(head->left.get(), scopemap);
+        *scopemap.find(head->name) = varval;
         return varval;
     } else if (head->nodetype == Type::Sequence) {
         if (head->children.empty()) {
             throw std::runtime_error("Cannot evaluate an empty sequence.\n");
         }
-        Value result = evaluate(head->children.front().get(), varmap);
+        Value result = evaluate(head->children.front().get(), scopemap);
         for (size_t i = 1; i < head->children.size(); i++) {
-            result = evaluate(head->children[i].get(), varmap);
+            result = evaluate(head->children[i].get(), scopemap);
         }
         return result;
     } else if (head->nodetype == Type::Print) {
-        Value toprint = evaluate(head->children[0].get(), varmap);
+        Value toprint = evaluate(head->children[0].get(), scopemap);
         switch (toprint.vtype) {
             case ValType::Int:
             std::cout << toprint.val;
@@ -88,21 +88,28 @@ Value evaluate(ASTNode *head, std::map<std::string, Value> &varmap) {
         std::cout << std::endl;
         return Value(ValType::Int, 0LL);
     } else if (head->nodetype == Type::While) {
-        while (evaluate(head->children[0].get(), varmap).boolval) {
-            evaluate(head->children[1].get(), varmap);
+        while (evaluate(head->children[0].get(), scopemap).boolval) {
+            evaluate(head->children[1].get(), scopemap);
         }
         return Value(ValType::Int, 0LL);
     } else if (head->nodetype == Type::If) {
-        Value ifcondition = evaluate(head->children[0].get(), varmap);
+        Value ifcondition = evaluate(head->children[0].get(), scopemap);
         if (ifcondition.boolval) {
-            evaluate(head->children[1].get(), varmap);
+            evaluate(head->children[1].get(), scopemap);
         } else if (head->children.size() == 3) {
-            evaluate(head->children[2].get(), varmap);
+            evaluate(head->children[2].get(), scopemap);
         }
         return Value(ValType::Int, 0LL);
+    } else if (head->nodetype == Type::Block) {
+        scopemap.push();
+        for (const std::unique_ptr<ASTNode> &child : head->children) {
+            evaluate(child.get(), scopemap);
+        }
+        scopemap.pop();
+        return Value(ValType::Int, 0LL);
     } else {
-        Value num1 = evaluate(head->left.get(), varmap);
-        Value num2 = evaluate(head->right.get(), varmap);
+        Value num1 = evaluate(head->left.get(), scopemap);
+        Value num2 = evaluate(head->right.get(), scopemap);
         switch (head->nodetype) {
             case Type::Plus:
             if (num1.vtype == ValType::Str && num2.vtype == ValType::Str) {

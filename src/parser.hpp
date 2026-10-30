@@ -137,6 +137,7 @@ std::unique_ptr<ASTNode> statement(TokCursor &tokcurs) {
 std::unique_ptr<ASTNode> block(TokCursor &tokcurs) {
     expect(tokcurs, Type::LCBracket, "{ expected.\n");
     std::unique_ptr<ASTNode> result = statementlist(tokcurs, Type::RCBracket);
+    result->nodetype = Type::Block;
     expect(tokcurs, Type::RCBracket, "} expected.\n");
     return result;
 }

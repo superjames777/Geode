@@ -12,7 +12,7 @@ namespace Geode {
 
 namespace typenodes {
 
-extern std::string TYPESTRS[31];
+extern std::string TYPESTRS[32];
 
 enum class Type { 
     Plus = 0, 
@@ -45,10 +45,11 @@ enum class Type {
     While = 27,
     String = 28,
     Bool = 29,
-    Declare = 30
+    Declare = 30,
+    Block = 31
 };
 
-std::string TYPESTRS[31] = { 
+std::string TYPESTRS[32] = { 
     "Plus", 
     "Minus", 
     "Multiply", 
@@ -79,7 +80,8 @@ std::string TYPESTRS[31] = {
     "While",
     "String",
     "Bool",
-    "Declare"
+    "Declare",
+    "Block"
 };
 
 enum class ValType {
