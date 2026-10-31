@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     } else {
         time_t timestamp;
         time(&timestamp);
-        std::cout << "Geode v0.4.0 - " << ctime(&timestamp) << std::endl;
+        std::cout << "Geode v1.6.0 - " << ctime(&timestamp) << std::endl;
         std::string equation;
         std::cout << "> ";
         while (std::getline(std::cin, equation)) {
@@ -65,14 +65,14 @@ int main(int argc, char *argv[]) {
                 Geode::typenodes::Value result = Geode::interpreter::interpret(equation, varmap, scopemap);
                 switch (result.vtype) {
                     case Geode::typenodes::ValType::Int:
-                        std::cout << result.val;
-                        break;
+                    std::cout << result.val;
+                    break;
                     case Geode::typenodes::ValType::Str:
-                        std::cout << result.strval;
-                        break;
+                    std::cout << result.strval;
+                    break;
                     case Geode::typenodes::ValType::Bool:
-                        std::cout << (result.boolval ? "true" : "false");
-                        break;
+                    std::cout << (result.boolval ? "true" : "false");
+                    break;
                 }
                 std::cout << std::endl;
             } catch (const std::exception &e) {
